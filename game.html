@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GAMER'S HEAVEN</title>
+    <style>
+        body { font-family: Arial,sans-serif; margin:0; padding:0; background:#f4f4f4; transition:0.3s; }
+        body.dark{ background:#111; color:#fff; }
+        header{ background:#ff6347; color:white; padding:20px; text-align:center; position:relative; }
+        nav{ background:#333; overflow:hidden; position:relative; display:none; }
+        nav a{ float:left; color:white; text-decoration:none; padding:14px 20px; display:block; cursor:pointer; }
+        nav a:hover{ background:#575757; }
+        .cart-icon{ float:right; padding:14px 20px; position:relative; cursor:pointer; }
+        .cart-count{ position:absolute; top:5px; right:5px; background:white; color:black; border-radius:50%; padding:2px 6px; font-size:12px; }
+        .dark-toggle{ position:absolute; right:50px; top:10px; cursor:pointer; color:white; }
+        section{ display:none; padding:40px 20px; }
+        section.active{ display:block; }
+        .login-container { display:flex; justify-content:center; align-items:center; height:80vh; }
+        .login-box { background:white; padding:30px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.2); width:300px; text-align:center; }
+        .login-box input { width:90%; padding:10px; margin:10px 0; border-radius:5px; border:1px solid #ddd; }
+        .login-box button { width:95%; padding:10px; margin:5px 0; border:none; border-radius:5px; background:#ff6347; color:white; cursor:pointer; }
+        .login-box button:hover { background:#e5533d; }
+        .social-btns button { width:48%; margin:2px; }
+        .forgot { font-size:12px; color:#555; cursor:pointer; }
+        .products{ display:flex; flex-wrap:wrap; justify-content:center; gap:20px; }
+        .product{ background:white; border:1px solid #ddd; padding:10px; width:150px; text-align:center; border-radius:5px; box-shadow:0 2px 5px rgba(0,0,0,0.2); transition:0.3s; cursor:pointer; position:relative; }
+        .product:hover{ transform:scale(1.05); }
+        .product img{ width:120px; height:150px; object-fit:cover; }
+        .featured-badge{ position:absolute; top:5px; left:5px; background:#ff6347; color:white; padding:2px 5px; font-size:10px; border-radius:3px; }
+        .wishlist{ position:absolute; top:5px; right:5px; cursor:pointer; color:#ff6347; font-size:18px; }
+        table{ width:80%; margin:auto; border-collapse:collapse; }
+        th,td{ padding:10px; border:1px solid #ddd; text-align:center; }
+        th{ background:#ff6347; color:white; }
+        footer{ background:#333; color:white; text-align:center; padding:15px; display:none; }
+        .popup{ position:fixed; top:20px; right:20px; background:black; color:white; padding:15px; border-radius:5px; display:none; z-index:1000; animation:fadein 0.5s; }
+        @keyframes fadein{ from{opacity:0;} to{opacity:1;} }
+        .modal{ display:none; position:fixed; z-index:2000; left:0; top:0; width:100%; height:100%; overflow:auto; background:rgba(0,0,0,0.7); }
+        .modal-content{ background:white; margin:10% auto; padding:20px; width:300px; border-radius:5px; position:relative; }
+        .modal-content.dark{ background:#222; color:white; }
+        .close{ position:absolute; top:5px; right:10px; font-size:18px; cursor:pointer; }
+        @media(max-width:600px){ .products{ flex-direction:column; align-items:center; } nav a{ float:none; text-align:center; } .dark-toggle{ right:10px; } }
+        input[type=text], input[type=number]{ padding:5px; width:90%; margin-bottom:10px; }
+        .payment-box{ margin-top:15px; }
+        #searchBar{ padding:5px; width:50%; margin:20px auto; display:block; border-radius:5px; border:1px solid #ddd; }
+        .scrollTop{ position:fixed; bottom:20px; right:20px; background:#ff6347; color:white; padding:10px; border:none; border-radius:50%; cursor:pointer; display:none; font-size:18px; }
+        .modal { display:none; position:fixed; z-index:2000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; }
+.modal-content { background:#fff; padding:20px; border-radius:10px; width:300px; text-align:center; box-shadow:0 5px 15px rgba(0,0,0,0.3); position:relative; transition:0.3s; }
+.modal-content.dark{ background:#222; color:white; }
+.modal-content img { border-radius:5px; margin-bottom:10px; }
+.close { position:absolute; top:10px; right:15px; font-size:20px; cursor:pointer; color:#ff6347; }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>GAMER'S HEAVEN</h1>
+    <p><i>Best games, best prices!</i></p>
+</header>
+
+<nav id="mainNav">
+    <a onclick="showSection('home')">Home</a>
+    <a onclick="showSection('about')">About</a>
+    <a onclick="showSection('contact')">Contact</a>
+    <a onclick="showSection('cart')">Cart</a>
+    <span class="cart-icon" onclick="showSection('cart')">🛒<span class="cart-count" id="cartCount">0</span></span>
+    <span class="dark-toggle" onclick="toggleDarkMode()">🌓</span>
+</nav>
+
+<div class="popup" id="popup"></div>
+<button class="scrollTop" id="scrollTopBtn" onclick="scrollToTop()">↑</button>
+
+<section id="login" class="active">
+    <div class="login-container">
+        <div class="login-box">
+            <h2>Login</h2>
+            <input type="text" id="loginEmail" placeholder="Email">
+            <input type="password" id="loginPass" placeholder="Password">
+            <div class="forgot" onclick="forgotPassword()">Forgot Password?</div>
+            <button onclick="login()">Login</button>
+            <h4>Or login with</h4>
+            <div class="social-btns">
+                <button onclick="socialLogin('Google')">Google</button>
+                <button onclick="socialLogin('Facebook')">Facebook</button>
+                <button onclick="socialLogin('Apple')">Apple</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="home">
+    <input type="text" id="searchBar" placeholder="Search games..." onkeyup="searchGames()">
+    <h2>Featured Games</h2>
+    <div class="products" id="productContainer">
+        <div class="product" onclick="showProductDetails('GTA V','Rs.1500','Grand Theft Auto V full version')">
+            <div class="featured-badge">Featured</div>
+            <span class="wishlist" onclick="toggleWishlist('GTA V'); event.stopPropagation()">♥</span>
+            <img src="pngwing.com (13).png" alt="GTA V"><h3>GTA V</h3><p>1500</p><button onclick="addToCart('GTA V',1500); event.stopPropagation();">Add to Cart</button>
+            <button onclick="openSystemModal('GTA V', 'pngwing.com (13).png', 'Rs.1500', ['OS: Windows 10','RAM: 8GB','GPU: GTX 1060']); event.stopPropagation();">
+    System Requirements
+           
+            
+</button>
+
+            
+</button>
+
+        </div>
+        <div class="product" onclick="showProductDetails('Far Cry 4','Rs.700','Far Cry 4 full game')">
+            <span class="wishlist" onclick="toggleWishlist('Far Cry 4'); event.stopPropagation()">♥</span>
+            <img src="pngwing.com.png" alt="Far Cry 4"><h3>Far Cry 4</h3><p>700</p>
+           <button onclick="openSystemModal('GTA V', 'pngwing.com (13).png', 'Rs.1500', ['OS: Windows 10','RAM: 8GB','GPU: GTX 1060']); event.stopPropagation();">
+    System Requirements
+</button>
+
+            <button onclick="addToCart('Far Cry 4',700); event.stopPropagation();">Add to Cart</button>
+        </div>
+        <div class="product" onclick="showProductDetails('NFS Run','Rs.350','Need For Speed Run')">
+            <span class="wishlist" onclick="toggleWishlist('NFS Run'); event.stopPropagation()">♥</span>
+            <img src="pngwing.com (1).png" alt="NFS Run"><h3>NFS Run</h3><p>350</p>
+            <button onclick="openSystemModal('GTA V', 'pngwing.com (13).png', 'Rs.1500', ['OS: Windows 10','RAM: 8GB','GPU: GTX 1060']); event.stopPropagation();">
+    System Requirements
+</button>
+
+            <button onclick="addToCart('NFS Run',350); event.stopPropagation();">Add to Cart</button>
+        </div>
+        <div class="product" onclick="showProductDetails('Far Cry Primal','Rs.350','Far Cry Primal game')">
+            <span class="wishlist" onclick="toggleWishlist('Far Cry Primal'); event.stopPropagation()">♥</span>
+            <img src="Daco_5318376.png" alt="Far Cry Primal"><h3>Far Cry Primal</h3><p>350</p>
+            <button onclick="openSystemModal('GTA V', 'pngwing.com (13).png', 'Rs.1500', ['OS: Windows 10','RAM: 8GB','GPU: GTX 1060']); event.stopPropagation();">
+    System Requirements
+</button>
+
+            <button onclick="addToCart('Far Cry Primal',350); event.stopPropagation();">Add to Cart</button>
+        </div>
+        <div class="product" onclick="showProductDetails('Assasin's Creed IV ','Rs.350','Assasin's Creed IV game')">
+            <span class="wishlist" onclick="toggleWishlist('Assasin's Creed IV'); event.stopPropagation()">♥</span>
+            <img src="pngwing.com (4).png" alt="Assasin's Creed IV"><h3>Assasin's Creed IV</h3><p>350</p>
+            <button onclick="openSystemModal('GTA V', 'pngwing.com (13).png', 'Rs.1500', ['OS: Windows 10','RAM: 8GB','GPU: GTX 1060']); event.stopPropagation();">
+    System Requirements
+</button>
+
+            <button onclick="addToCart('Assasin's Creed IV',350); event.stopPropagation();">Add to Cart</button>
+    </div>
+    <div class="product" onclick="showProductDetails('Far Cry 3 ','Rs.200','Far Cry 3 game')">
+            <span class="wishlist" onclick="toggleWishlist('far Cry 3'); event.stopPropagation()">♥</span>
+            <img src="pngwing.com (5).png" alt="Far Cry Primal"><h3>far Cry 3</h3><p>200</p>
+            <button onclick="openSystemModal('GTA V', 'pngwing.com (13).png', 'Rs.1500', ['OS: Windows 10','RAM: 8GB','GPU: GTX 1060']); event.stopPropagation();">
+    System Requirements
+</button>
+
+            <button onclick="addToCart('Far Cry 3',200); event.stopPropagation();">Add to Cart</button>
+    </div>
+     <div class="product" onclick="showProductDetails('Need For Speed MW','Rs.150','Need For Speed MW game')">
+            <span class="wishlist" onclick="toggleWishlist('far Cry 3'); event.stopPropagation()">♥</span>
+            <img src="pngwing.com (6).png" alt="Need For Speed MW"><h3>Need For Speed MW</h3><p>150</p>
+            <button onclick="openSystemModal('GTA V', 'pngwing.com (13).png', 'Rs.1500', ['OS: Windows 10','RAM: 8GB','GPU: GTX 1060']); event.stopPropagation();">
+    System Requirements
+</button>
+
+            <button onclick="addToCart('Need For Speed MW',150); event.stopPropagation();">Add to Cart</button>
+    </div>
+    <div class="product" onclick="showProductDetails('Amazing Spider Man 2','Rs.200','Amazing Spider Man 2 game')">
+            <span class="wishlist" onclick="toggleWishlist('far Cry 3'); event.stopPropagation()">♥</span>
+            <img src="pngwing.com (8).png" alt="Amazing Spider Man 2"><h3>Amazing Spider Man 2</h3><p>200</p>
+           <button onclick="openSystemModal('GTA V', 'pngwing.com (13).png', 'Rs.1500', ['OS: Windows 10','RAM: 8GB','GPU: GTX 1060']); event.stopPropagation();">
+    System Requirements
+</button>
+
+
+            <button onclick="addToCart('Amazing Spider Man 2',200); event.stopPropagation();">Add to Cart</button>
+    </div>
+    <div class="product" onclick="showProductDetails('Need For Speed rivals','Rs.300','Need For Speed rivals game')">
+            <span class="wishlist" onclick="toggleWishlist('far Cry 3'); event.stopPropagation()">♥</span>
+            <img src="pngwing.com (9).png" alt="Need For Speed rivals"><h3>Need For Speed rivals</h3><p>300</p>
+            <button onclick="openSystemModal('GTA V', 'pngwing.com (13).png', 'Rs.1500', ['OS: Windows 10','RAM: 8GB','GPU: GTX 1060']); event.stopPropagation();">
+    System Requirements
+</button>
+
+            <button onclick="addToCart('Need For Speed rivals',300); event.stopPropagation();">Add to Cart</button>
+    </div>
+     <div class="product" onclick="showProductDetails('Euro Truck Simulator 2','Rs.200','Euro Truck Simulator 2 game')">
+            <span class="wishlist" onclick="toggleWishlist('Euro Truck Simulator 2'); event.stopPropagation()">♥</span>
+            <img src="pngwing.com (10).png" alt="Euro Truck Simulator 2"><h3>Euro Truck Simulator 2</h3><p>200</p>
+           <button onclick="openSystemModal('GTA V', 'pngwing.com (13).png', 'Rs.1500', ['OS: Windows 10','RAM: 8GB','GPU: GTX 1060']); event.stopPropagation();">
+    System Requirements
+</button>
+
+            <button onclick="addToCart('Euro Truck Simulator 2',200); event.stopPropagation();">Add to Cart</button>
+    </div>
+    <div class="product" onclick="showProductDetails('Need For Speed Shift 2','Rs.150','Need For Speed Shift 2 game')">
+            <span class="wishlist" onclick="toggleWishlist('Need For Speed Shift 2'); event.stopPropagation()">♥</span>
+            <img src="pngwing.com (12).png" alt="Need For Speed Shift 2"><h3>Need For Speed Shift 2</h3><p>150</p>
+           <button onclick="openSystemModal('GTA V', 'pngwing.com (13).png', 'Rs.1500', ['OS: Windows 10','RAM: 8GB','GPU: GTX 1060']); event.stopPropagation();">
+    System Requirements
+</button>
+
+            <button onclick="addToCart('Need For Speed Shift 2',150); event.stopPropagation();">Add to Cart</button>
+    </div>
+    <div class="product" onclick="showProductDetails('Grand Theft Auto Vice City','Rs.50','Grand Theft Auto Vice City')">
+            <span class="wishlist" onclick="toggleWishlist('Grand Theft Auto Vice City'); event.stopPropagation()">♥</span>
+            <img src="pngegg (1).png" alt="Grand Theft Auto Vice City"><h3>Grand Theft Auto Vice City</h3><p>50</p>
+            <button onclick="openSystemModal('GTA V', 'pngwing.com (13).png', 'Rs.1500', ['OS: Windows 10','RAM: 8GB','GPU: GTX 1060']); event.stopPropagation();">
+    System Requirements
+</button>
+
+            <button onclick="addToCart('Grand Theft Auto Vice City',50); event.stopPropagation();">Add to Cart</button>
+    </div>
+    <div class="product" onclick="showProductDetails('Witcher 2','Rs.250','Witcher 2')">
+            <span class="wishlist" onclick="toggleWishlist('Grand Theft Auto Vice City'); event.stopPropagation()">♥</span>
+            <img src="pngegg (2).png" alt="Witcher 2"><h3>Witcher 2</h3><p>250</p>
+            <button onclick="openSystemModal('GTA V', 'pngwing.com (13).png', 'Rs.1500', ['OS: Windows 10','RAM: 8GB','GPU: GTX 1060']); event.stopPropagation();">
+    System Requirements
+</button>
+
+            <button onclick="addToCart('Witcher 2',250); event.stopPropagation();">Add to Cart</button>
+    </div>
+    <div class="product" onclick="showProductDetails('Mortal Combat Kompete Edition','Rs.200','Mortal Combat Kompete Edition')">
+            <span class="wishlist" onclick="toggleWishlist('Mortal Combat Kompete Edition'); event.stopPropagation()">♥</span>
+            <img src="pngegg (3).png" alt="Mortal Combat Kompete Edition"><h3>Mortal Combat Kompete Edition</h3><p>200</p>
+            <button onclick="openSystemModal('GTA V', 'pngwing.com (13).png', 'Rs.1500', ['OS: Windows 10','RAM: 8GB','GPU: GTX 1060']); event.stopPropagation();">
+    System Requirements
+</button>
+
+            <button onclick="addToCart('Mortal Combat Kompete Edition',200); event.stopPropagation();">Add to Cart</button>
+    </div>
+    <div class="product" onclick="showProductDetails('Need For Speed Payback','Rs.600','Need For Speed Payback')">
+            <span class="wishlist" onclick="toggleWishlist('Need For Speed Payback'); event.stopPropagation()">♥</span>
+            <img src="pngegg (4).png" alt="Need For Speed Payback"><h3>Need For Speed Payback</h3><p>600</p>
+            <button onclick="openSystemModal('GTA V', 'pngwing.com (13).png', 'Rs.1500', ['OS: Windows 10','RAM: 8GB','GPU: GTX 1060']); event.stopPropagation();">
+    System Requirements
+</button>
+
+            <button onclick="addToCart('Need For Speed Payback',600); event.stopPropagation();">Add to Cart</button>
+    </div>
+</section>
+
+<section id="about">
+    <h2>About Us</h2>
+    <p>Hi! We are Kabinash and Aadhil, passionate gamers who created GAMER'S HEAVEN to bring fellow gamers the best games at the best prices.</p>
+</section>
+
+<section id="contact">
+    <h2>Contact</h2>
+    <form onsubmit="sendMessage(); return false;">
+        <input type="text" id="name" placeholder="Your Name" required><br>
+        <input type="text" id="email" placeholder="Your Email" required><br>
+        <input type="text" id="message" placeholder="Your Message" required><br>
+        <button type="submit">Send Message</button>
+    </form>
+</section>
+
+<section id="cart">
+    <h2>Your Shopping Cart</h2>
+    <table id="cartTable">
+        <thead><tr><th>Game</th><th>Price</th><th>Qty</th><th>Subtotal</th><th>Action</th></tr></thead>
+        <tbody></tbody>
+        <tfoot><tr><th colspan="3">Total</th><th id="totalPrice">0</th><th></th></tr></tfoot>
+    </table>
+
+    <div class="payment-section">
+        <h3>Checkout</h3>
+        <label><input type="radio" name="paymentMethod" value="ezcash" onclick="showPaymentForm('ezcash')"> EZ Cash</label><br>
+        <label><input type="radio" name="paymentMethod" value="card" onclick="showPaymentForm('card')"> Bank Card</label>
+
+        <div id="ezcashForm" class="payment-box" style="display:none;">
+            <p><b>Send payment to EZ Cash Number:</b> 0721298963</p>
+            <button onclick="confirmPayment('ezcash')">Confirm Payment</button>
+        </div>
+
+        <div id="cardForm" class="payment-box" style="display:none;">
+            <input type="text" placeholder="Card Number"><br>
+            <input type="text" placeholder="Expiry MM/YY"><br>
+            <input type="text" placeholder="CVC"><br>
+            <button onclick="confirmPayment('card')">Pay Now</button>
+        </div>
+
+        <input type="text" id="promo" placeholder="Enter Promo Code">
+        <button onclick="applyPromo()">Apply</button>
+    </div>
+</section>
+
+<footer>
+    <p>&copy; 2025 Gamer's Heaven | Follow us: <a href="#">FB</a> | <a href="#">IG</a> | <a href="#">TW</a></p>
+</footer>
+
+<script>
+let cart={}, wishlist={};
+
+function login(){ const email=document.getElementById('loginEmail').value.trim(); const pass=document.getElementById('loginPass').value.trim(); if(email && pass){ showPopup("Login successful!"); document.getElementById('login').style.display='none'; document.getElementById('mainNav').style.display='block'; document.querySelector('footer').style.display='block'; showSection('home'); } else { showPopup("Please enter email and password!"); } }
+function forgotPassword(){ alert("Password reset link sent to your email (simulated)."); }
+function socialLogin(platform){ showPopup(platform+" login successful!"); document.getElementById('login').style.display='none'; document.getElementById('mainNav').style.display='block'; document.querySelector('footer').style.display='block'; showSection('home'); }
+
+function showSection(id){ document.querySelectorAll('section').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function addToCart(name,price){ if(cart[name]){ cart[name].quantity++; cart[name].subtotal+=price; } else{ cart[name]={price,quantity:1,subtotal:price}; } updateCartTable(); showPopup(name+" added!"); }
+function removeFromCart(name){ delete cart[name]; updateCartTable(); showPopup(name+" removed!"); }
+function changeQuantity(name, delta){ if(cart[name]){ cart[name].quantity+=delta; if(cart[name].quantity<1) { delete cart[name]; showPopup(name+" removed!"); } else { cart[name].subtotal=cart[name].price*cart[name].quantity; showPopup(name+" updated!"); } updateCartTable(); } }
+function updateCartTable(){ const tbody=document.querySelector('#cartTable tbody'); tbody.innerHTML=''; let total=0; for(let game in cart){ tbody.innerHTML+=`<tr><td>${game}</td><td>${cart[game].price}</td><td><button onclick="changeQuantity('${game}',-1)">-</button>${cart[game].quantity}<button onclick="changeQuantity('${game}',1)">+</button></td><td>${cart[game].subtotal}</td><td><button onclick="removeFromCart('${game}')">Remove</button></td></tr>`; total+=cart[game].subtotal; } document.getElementById('totalPrice').innerText=total; document.getElementById('cartCount').innerText=Object.keys(cart).length; }
+function showPopup(msg){ const popup=document.getElementById('popup'); popup.innerText=msg; popup.style.display='block'; setTimeout(()=>popup.style.display='none',2000); }
+function toggleWishlist(name){ if(wishlist[name]){ delete wishlist[name]; showPopup(name+" removed from wishlist!"); } else{ wishlist[name]=true; showPopup(name+" added to wishlist!"); } }
+function searchGames(){ const input=document.getElementById('searchBar').value.toLowerCase(); const products=document.querySelectorAll('#productContainer .product'); products.forEach(p=>{ const name=p.querySelector('h3').innerText.toLowerCase(); p.style.display=name.startsWith(input)?'block':'none'; }); }
+function toggleDarkMode(){ document.body.classList.toggle('dark'); }
+function scrollToTop(){ window.scrollTo({top:0, behavior:'smooth'}); }
+window.onscroll=function(){ document.getElementById('scrollTopBtn').style.display=(window.scrollY>200)?'block':'none'; }
+
+function showPaymentForm(method){ document.getElementById('ezcashForm').style.display = (method==='ezcash') ? 'block':'none'; document.getElementById('cardForm').style.display = (method==='card') ? 'block':'none'; }
+function confirmPayment(method){ if(Object.keys(cart).length === 0){ alert("Cart is empty!"); return; } const total=document.getElementById('totalPrice').innerText; alert("Send Rs."+total+" via "+method); cart={}; updateCartTable(); document.getElementById('ezcashForm').style.display='none'; document.getElementById('cardForm').style.display='none'; }
+function applyPromo(){ const promo=document.getElementById('promo').value.trim(); if(promo==='DISCOUNT10'){ let total=Number(document.getElementById('totalPrice').innerText); total=Math.round(total*0.9); document.getElementById('totalPrice').innerText=total; showPopup("Promo applied! 10% off"); } else{ showPopup("Invalid Promo Code"); } }
+function showSystemRequirements(game, requirements) {
+    const popup = document.getElementById('popup');
+    popup.innerHTML = `<b>${game} System Requirements:</b><br>${requirements}`;
+    popup.style.display = 'block';
+    setTimeout(() => popup.style.display = 'none', 4000); // popup disappears after 4s
+}
+function openSystemModal(name, imgSrc, price, requirements) {
+    document.getElementById('sysGameImg').src = imgSrc;
+    document.getElementById('sysGameName').innerText = name;
+    document.getElementById('sysGamePrice').innerText = price;
+    
+    const reqList = document.getElementById('sysGameReqs');
+    reqList.innerHTML = '';
+    requirements.forEach(req => {
+        const li = document.createElement('li');
+        li.innerText = req;
+        reqList.appendChild(li);
+    });
+
+    document.getElementById('systemModal').style.display = 'flex';
+}
+
+function closeSystemModal() {
+    document.getElementById('systemModal').style.display = 'none';
+}
+
+
+</script>
+<!-- SYSTEM REQUIREMENTS MODAL -->
+<div id="systemModal" class="modal">
+    <div class="modal-content" id="systemModalContent">
+        <span class="close" onclick="closeSystemModal()">&times;</span>
+        <img id="sysGameImg" src="" alt="" style="width:120px; height:150px; display:block; margin:0 auto 10px;">
+        <h3 id="sysGameName"></h3>
+        <p><b>Price:</b> <span id="sysGamePrice"></span></p>
+        <p><b>System Requirements:</b></p>
+        <ul id="sysGameReqs"></ul>
+    </div>
+</div>
+
+</body>
+</html>
